@@ -2,16 +2,14 @@
 /**
   * SpamPrevent
   *
-  * Eresus 2
-  *
   * Защита E-mail адресов от спам-роботов
   *
-  * @version 1.04
+  * @version 1.05
   *
-  * @copyright   2007-2008, Eresus Group, http://eresus.ru/
-  * @license     http://www.gnu.org/licenses/gpl.txt  GPL License 3
-  * @maintainer  Mikhail Krasilnikov <mk@procreat.ru>
-  * @author      Mikhail Krasilnikov <mk@procreat.ru>
+  * @copyright 2007, Eresus Group, http://eresus.ru/
+  * @copyright 2009, ООО "Два слона", http://dvaslona.ru/
+  * @license http://www.gnu.org/licenses/gpl.txt  GPL License 3
+  * @author Mikhail Krasilnikov <mk@procreat.ru>
   *
   * Данная программа является свободным программным обеспечением. Вы
   * вправе распространять ее и/или модифицировать в соответствии с
@@ -28,27 +26,73 @@
   * Вы должны были получить копию Стандартной Общественной Лицензии
   * GNU с этой программой. Если Вы ее не получили, смотрите документ на
   * <http://www.gnu.org/licenses/>
+  *
+  * @package SpamPrevent
+  *
+  * $Id$
   */
 
-class SpamPrevent extends Plugin {
-  var $version = '1.04';
-  var $kernel = '2.10rc';
-	var $type = 'client';
-  var $title = 'SpamPrevent';
-  var $description = 'Защита E-mail адресов от спам-роботов';
-  var $settings = array(
+/**
+ * Основной класс плагина
+ *
+ * @package SpamPrevent
+ */
+class SpamPrevent extends Plugin
+{
+	/**
+	 * Версия плагина
+	 *
+	 * @var string
+	 */
+  public $version = '1.05a';
+
+  /**
+   * Минимальная версия ядра
+   *
+   * @var string
+   */
+  public $kernel = '2.10rc';
+
+  /**
+   * Тип
+   *
+   * @var string
+   */
+	public $type = 'client';
+
+	/**
+	 * Название
+	 *
+	 * @var string
+	 */
+  public $title = 'SpamPrevent';
+
+  /**
+   * Описание
+   *
+   * @var string
+   */
+  public $description = 'Защита E-mail адресов от спам-роботов';
+
+  /**
+   * Настройки
+   *
+   * @var array
+   */
+  public $settings = array(
     'href_method' => 'onmouseover',
     'href_fake_email' => 'null@example.com',
     'text_method' => 'entity',
   );
+
   /**
    * Конструктор
    *
    * @return TSpamPrevent
    */
-  function SpamPrevent()
+  public function __construct()
   {
-    parent::Plugin();
+    parent::__construct();
     $this->listenEvents('clientOnPageRender');
   }
   //-----------------------------------------------------------------------------
@@ -128,4 +172,3 @@ class SpamPrevent extends Plugin {
   //-----------------------------------------------------------------------------
 
 }
-?>
