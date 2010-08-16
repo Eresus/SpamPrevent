@@ -44,7 +44,7 @@ class SpamPrevent extends Plugin
 	 *
 	 * @var string
 	 */
-  public $version = '1.05a';
+  public $version = '1.05b';
 
   /**
    * Минимальная версия ядра
