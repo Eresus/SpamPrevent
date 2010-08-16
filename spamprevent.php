@@ -44,14 +44,14 @@ class SpamPrevent extends Plugin
 	 *
 	 * @var string
 	 */
-  public $version = '1.05b';
+  public $version = '1.05';
 
   /**
    * Минимальная версия ядра
    *
    * @var string
    */
-  public $kernel = '2.10rc';
+  public $kernel = '2.10';
 
   /**
    * Тип
