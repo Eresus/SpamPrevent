@@ -93,7 +93,7 @@ class SpamPrevent extends Plugin
 	public function __construct()
 	{
 		parent::__construct();
-		$this->listenEvents('clientOnPageRender');
+		$this->listenEvents('clientBeforeSend');
 	}
 	//-----------------------------------------------------------------------------
 
@@ -133,12 +133,12 @@ class SpamPrevent extends Plugin
 	}
 	//-----------------------------------------------------------------------------
 	/**
-	 * Обработчик события clientOnPageRender
+	 * Обработчик события clientBeforeSend
 	 *
 	 * @param string $text	Исходный текст страницы
 	 * @return string
 	 */
-	function clientOnPageRender($text)
+	function clientBeforeSend($text)
 	{
 		define('local_chars', '\d\w!#$%&\'*+\-\/=?^_`{|}~');
 		define('local_part', '['.local_chars.']['.local_chars.'.]{0,63}');
