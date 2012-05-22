@@ -4,12 +4,12 @@
  *
  * Защита E-mail адресов от спам-роботов
  *
- * @version 1.06
+ * @version ${product.version}
  *
  * @copyright 2007, Eresus Group, http://eresus.ru/
  * @copyright 2009, ООО "Два слона", http://dvaslona.ru/
  * @license http://www.gnu.org/licenses/gpl.txt	GPL License 3
- * @author Mikhail Krasilnikov <mk@procreat.ru>
+ * @author Михаил Красильников <mk@dvaslona.ru>
  *
  * Данная программа является свободным программным обеспечением. Вы
  * вправе распространять ее и/или модифицировать в соответствии с
@@ -44,14 +44,14 @@ class SpamPrevent extends Plugin
 	 *
 	 * @var string
 	 */
-	public $version = '1.06a';
+	public $version = '${product.version}';
 
 	/**
 	 * Минимальная версия ядра
 	 *
 	 * @var string
 	 */
-	public $kernel = '2.10rc';
+	public $kernel = '3.00b';
 
 	/**
 	 * Тип
@@ -88,7 +88,7 @@ class SpamPrevent extends Plugin
 	/**
 	 * Конструктор
 	 *
-	 * @return TSpamPrevent
+	 * @return SpamPrevent
 	 */
 	public function __construct()
 	{
@@ -132,6 +132,7 @@ class SpamPrevent extends Plugin
 		return $result;
 	}
 	//-----------------------------------------------------------------------------
+
 	/**
 	 * Обработчик события clientBeforeSend
 	 *
@@ -140,9 +141,9 @@ class SpamPrevent extends Plugin
 	 */
 	function clientBeforeSend($text)
 	{
-		define('local_chars', '\d\w!#$%&\'*+\-\/=?^_`{|}~');
-		define('local_part', '['.local_chars.']['.local_chars.'.]{0,63}');
-		define('server_part', '[\d\w][\d\w\-]+\.[\d\w\-.]{2,}');
+		$local_chars = '\d\w!#$%&\'*+\-\/=?^_`{|}~';
+		$local_part = '[' . $local_chars . '][' . $local_chars . '.]{0,63}';
+		$server_part = '[\d\w][\d\w\-]+\.[\d\w\-.]{2,}';
 		if ($this->settings['href_method'] != 'none')
 		{
 			preg_match_all('/<a\s+.*href="mailto:([^"]+)"(.*)>/Ui', $text, $matches,
@@ -166,8 +167,8 @@ class SpamPrevent extends Plugin
 		}
 		if ($this->settings['text_method'] != 'none')
 		{
-			preg_match_all('/(mailto:|[^'.local_chars.'])('.local_part.'@'.server_part.')/i', $text,
-				$matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+			preg_match_all('/(mailto:|[^' . $local_chars . '])(' . $local_part . '@' . $server_part .
+				')/i', $text, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 			$delta = 0;
 			for ($i = 0; $i < count($matches); $i++)
 			{

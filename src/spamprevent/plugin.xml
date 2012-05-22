@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<declaration uid="org.example.plugins.myplugin" format="1.00">
+
+	<requires>
+		<plugin name="otherplugin" min="1.00" max="2.00" />
+	</requires>
+
+</declaration>
