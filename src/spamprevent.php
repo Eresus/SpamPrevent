@@ -95,7 +95,6 @@ class SpamPrevent extends Plugin
 		parent::__construct();
 		$this->listenEvents('clientBeforeSend');
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Настройки плагина
@@ -104,8 +103,6 @@ class SpamPrevent extends Plugin
 	 */
 	function settings()
 	{
-		global $page;
-
 		$form = array(
 			'name'=>'SettingsForm',
 			'caption' => $this->title.' '.$this->version,
@@ -128,10 +125,12 @@ class SpamPrevent extends Plugin
 			),
 			'buttons' => array('ok', 'apply', 'cancel'),
 		);
+
+		/** @var TAdminUI $page */
+		$page = Eresus_Kernel::app()->getPage();
 		$result = $page->renderForm($form, $this->settings);
 		return $result;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Обработчик события clientBeforeSend
@@ -173,7 +172,6 @@ class SpamPrevent extends Plugin
 		}
 		return $text;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Кодирует ссылку
@@ -202,7 +200,6 @@ class SpamPrevent extends Plugin
 		}
 		return $replace;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Кодирует строку текста
@@ -229,5 +226,4 @@ class SpamPrevent extends Plugin
 		}
 		return $replace;
 	}
-	//-----------------------------------------------------------------------------
 }
