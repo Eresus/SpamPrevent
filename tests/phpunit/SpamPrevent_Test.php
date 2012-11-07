@@ -57,7 +57,6 @@ class SpamPrevent_Test extends PHPUnit_Framework_TestCase
 		$this->assertContains('onmouseover', $encoded);
 		$this->assertNotContains('user@example.org', $encoded);
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * @covers SpamPrevent::encodeHref
@@ -73,7 +72,6 @@ class SpamPrevent_Test extends PHPUnit_Framework_TestCase
 
 		$m_encodeHref->invoke($plugin, 'bar');
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * @covers SpamPrevent::encodeText
@@ -93,7 +91,6 @@ class SpamPrevent_Test extends PHPUnit_Framework_TestCase
 			'&#46;&#111;&#114;&#103;', $encoded);
 
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * @covers SpamPrevent::encodeText
@@ -109,7 +106,6 @@ class SpamPrevent_Test extends PHPUnit_Framework_TestCase
 
 		$m_encodeText->invoke($plugin, 'bar');
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * @covers SpamPrevent::clientBeforeSend
@@ -126,8 +122,12 @@ class SpamPrevent_Test extends PHPUnit_Framework_TestCase
 			'&#98;&#46;&#115;&#111;&#109;&#101;&#45;&#100;&#111;&#109;&#97;&#105;&#110;&#46;&#111;' .
 			'&#114;&#103;', $plugin->clientBeforeSend('my.mail123@sub.some-domain.org'));
 
+		// См. http://bugs.eresus.ru/view.php?id=880
+		$this->assertEquals('<a>&#1080;&#1084;&#1103;&#1088;&#1077;&#1082;&#64;&#1076;&#1086;&#1084;'
+			. '&#1077;&#1085;&#46;&#1088;&#1092;</a>',
+			$plugin->clientBeforeSend('<a>имярек@домен.рф</a>'));
+
 		$this->assertEquals('mailto:my.mail123@sub.some-domain.org',
 			$plugin->clientBeforeSend('mailto:my.mail123@sub.some-domain.org'));
 	}
-	//-----------------------------------------------------------------------------
 }

@@ -140,11 +140,11 @@ class SpamPrevent extends Plugin
 	 */
 	function clientBeforeSend($text)
 	{
-		$local_part = '[^\x00-\x20]+';
-		$server_part = '[\d\wа-яА-Я][\d\wа-яА-Я\-]+\.([\d\w\-.]{2,}|рф)';
+		$local_part = '[\wа-я\.\-]+';
+		$server_part = '[\d\wа-я][\d\wа-я\-\.]+\.(\w{2,}|рф)';
 		if ($this->settings['href_method'] != 'none')
 		{
-			preg_match_all('/<a\s+.*href="mailto:([^"]+)"(.*)>/Ui', $text, $matches,
+			preg_match_all('/<a\s+.*href="mailto:([^"]+)"(.*)>/ui', $text, $matches,
 				PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 			$delta = 0;
 			for ($i = 0; $i < count($matches); $i++)
@@ -156,17 +156,17 @@ class SpamPrevent extends Plugin
 		}
 		if ($this->settings['text_method'] != 'none')
 		{
-			preg_match_all('/(' . $local_part . '@' . $server_part . ')/i', $text, $matches,
+			preg_match_all('/(mailto:)?' . $local_part . '@' . $server_part . '/ui', $text, $matches,
 				PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 			$delta = 0;
 			for ($i = 0; $i < count($matches); $i++)
 			{
-				if (!preg_match('/mailto:/i', $matches[$i][0][0]))
+				if (strpos($matches[$i][0][0], 'mailto:') === false)
 				{
-					$replace = $this->encodeText($matches[$i][1][0]);
-					$text = substr_replace($text, $replace, $matches[$i][1][1] + $delta,
-						strlen($matches[$i][1][0]));
-					$delta += strlen($replace) - strlen($matches[$i][1][0]);
+					$replace = $this->encodeText($matches[$i][0][0]);
+					$text = substr_replace($text, $replace, $matches[$i][0][1] + $delta,
+						mb_strlen($matches[$i][0][0]));
+					$delta += mb_strlen($replace) - mb_strlen($matches[$i][0][0]);
 				}
 			}
 		}
