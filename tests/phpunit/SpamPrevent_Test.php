@@ -56,6 +56,17 @@ class SpamPrevent_Test extends PHPUnit_Framework_TestCase
 		$this->assertContains('null@example.com', $encoded);
 		$this->assertContains('onmouseover', $encoded);
 		$this->assertNotContains('user@example.org', $encoded);
+
+		$encoded = $m_encodeHref->invoke($plugin, 'имярек@владение.рф');
+		$this->assertContains('null@example.com', $encoded);
+		$this->assertContains('onmouseover', $encoded);
+		$this->assertNotContains('имярек@владение.рф', $encoded);
+
+		// Проверяем что на выходе правильная строка Unicode
+		$this->assertEquals(1, preg_match('/./u', $encoded));
+
+		$decoded = str_replace("'+'", '', $encoded);
+		$this->assertContains('имярек@владение.рф', $decoded);
 	}
 
 	/**
@@ -126,6 +137,12 @@ class SpamPrevent_Test extends PHPUnit_Framework_TestCase
 		$this->assertEquals('<a>&#1080;&#1084;&#1103;&#1088;&#1077;&#1082;&#64;&#1076;&#1086;&#1084;'
 			. '&#1077;&#1085;&#46;&#1088;&#1092;</a>',
 			$plugin->clientBeforeSend('<a>имярек@домен.рф</a>'));
+
+		$encoded =
+			$plugin->clientBeforeSend('<a href="mailto:имярек@владение.рф">имярек@владение.рф</a>');
+		$this->assertNotContains('имярек@владение.рф', $encoded);
+		$decoded = str_replace("'+'", '', $encoded);
+		$this->assertContains('имярек@владение.рф', $decoded);
 
 		$this->assertEquals('mailto:my.mail123@sub.some-domain.org',
 			$plugin->clientBeforeSend('mailto:my.mail123@sub.some-domain.org'));

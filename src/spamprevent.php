@@ -140,7 +140,7 @@ class SpamPrevent extends Plugin
 	 */
 	function clientBeforeSend($text)
 	{
-		$local_part = '[\wа-я\.\-]+';
+		$local_part = '[\d\wа-я][\d\wа-я\.\-]*';
 		$server_part = '[\d\wа-я][\d\wа-я\-\.]+\.(\w{2,}|рф)';
 		if ($this->settings['href_method'] != 'none')
 		{
@@ -190,7 +190,8 @@ class SpamPrevent extends Plugin
 		{
 			case 'onmouseover':
 				$replace = $this->settings['href_fake_email'];
-				$mail = chunk_split('mailto:' . $source, mt_rand(3, 6), "'+'");
+				$mail = implode("'+'", preg_split('/(.{' . mt_rand(3, 6) . '})/us', 'mailto:' . $source,
+					0, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE));
 				$replace .= '" onmouseover="this.href=\''.$mail.'\'';
 				break;
 
