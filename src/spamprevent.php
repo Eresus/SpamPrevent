@@ -165,8 +165,8 @@ class SpamPrevent extends Plugin
 				{
 					$replace = $this->encodeText($matches[$i][0][0]);
 					$text = substr_replace($text, $replace, $matches[$i][0][1] + $delta,
-						mb_strlen($matches[$i][0][0]));
-					$delta += mb_strlen($replace) - mb_strlen($matches[$i][0][0]);
+						strlen($matches[$i][0][0]));
+					$delta += strlen($replace) - strlen($matches[$i][0][0]);
 				}
 			}
 		}
