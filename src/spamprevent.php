@@ -152,6 +152,7 @@ class SpamPrevent extends Plugin
 				$replace = $this->encodeHref($matches[$i][1][0]);
 				$text = substr_replace($text, $replace, $matches[$i][1][1] + $delta,
 					strlen($matches[$i][1][0]));
+				$delta += strlen($replace) - strlen($matches[$i][1][0]);
 			}
 		}
 		if ($this->settings['text_method'] != 'none')
