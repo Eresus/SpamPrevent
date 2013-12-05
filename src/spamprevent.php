@@ -26,10 +26,6 @@
  * Вы должны были получить копию Стандартной Общественной Лицензии
  * GNU с этой программой. Если Вы ее не получили, смотрите документ на
  * <http://www.gnu.org/licenses/>
- *
- * @package SpamPrevent
- *
- * $Id$
  */
 
 /**
@@ -39,193 +35,192 @@
  */
 class SpamPrevent extends Plugin
 {
-	/**
-	 * Версия плагина
-	 *
-	 * @var string
-	 */
-	public $version = '${product.version}';
+    /**
+     * Версия плагина
+     *
+     * @var string
+     */
+    public $version = '${product.version}';
 
-	/**
-	 * Минимальная версия ядра
-	 *
-	 * @var string
-	 */
-	public $kernel = '3.00b';
+    /**
+     * Минимальная версия ядра
+     *
+     * @var string
+     */
+    public $kernel = '3.00b';
 
-	/**
-	 * Тип
-	 *
-	 * @var string
-	 */
-	public $type = 'client';
+    /**
+     * Тип
+     *
+     * @var string
+     */
+    public $type = 'client';
 
-	/**
-	 * Название
-	 *
-	 * @var string
-	 */
-	public $title = 'SpamPrevent';
+    /**
+     * Название
+     *
+     * @var string
+     */
+    public $title = 'SpamPrevent';
 
-	/**
-	 * Описание
-	 *
-	 * @var string
-	 */
-	public $description = 'Защита E-mail адресов от спам-роботов';
+    /**
+     * Описание
+     *
+     * @var string
+     */
+    public $description = 'Защита E-mail адресов от спам-роботов';
 
-	/**
-	 * Настройки
-	 *
-	 * @var array
-	 */
-	public $settings = array(
-		'href_method' => 'onmouseover',
-		'href_fake_email' => 'null@example.com',
-		'text_method' => 'entity',
-	);
+    /**
+     * Настройки
+     *
+     * @var array
+     */
+    public $settings = array(
+        'href_method' => 'onmouseover',
+        'href_fake_email' => 'null@example.com',
+        'text_method' => 'entity',
+    );
 
-	/**
-	 * Конструктор
-	 *
-	 * @return SpamPrevent
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->listenEvents('clientBeforeSend');
-	}
+    /**
+     * Конструктор
+     *
+     * @return SpamPrevent
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->listenEvents('clientBeforeSend');
+    }
 
-	/**
-	 * Настройки плагина
-	 *
-	 * @return string	Диалог настроек
-	 */
-	function settings()
-	{
-		$form = array(
-			'name'=>'SettingsForm',
-			'caption' => $this->title.' '.$this->version,
-			'width' => '500px',
-			'fields' => array (
-				array('type'=>'hidden','name'=>'update', 'value'=>$this->name),
-				array('type'=>'text', 'value'=>'SpamPrevent изменяет все адреса e-mail на страницах ' .
-					'таким образом, чтобы скрыть их от роботов, собирающих базы адресов для спамеров.'),
-				array('type'=>'header', 'value'=>'Защита адресов в ссылках'),
-				array('type'=>'select', 'name' => 'href_method', 'label' => 'Метод',
-					'items' => array('(не использовать защиту)',
-						'JavaScript - подставлять адрес только при наведении мыши'),
-					'values' => array('none', 'onmouseover')),
-				array('type'=>'edit', 'name' => 'href_fake_email', 'label' => 'Фиктивный адрес',
-					'width' => '100%'),
-				array('type'=>'header', 'value'=>'Защита адресов в тексте'),
-				array('type'=>'select', 'name' => 'text_method', 'label' => 'Метод',
-					'items' => array('(не использовать защиту)', 'Конвертировать символы адреса в спец.коды'),
-					'values' => array('none', 'entity')),
-			),
-			'buttons' => array('ok', 'apply', 'cancel'),
-		);
+    /**
+     * Настройки плагина
+     *
+     * @return string	Диалог настроек
+     */
+    function settings()
+    {
+        $form = array(
+            'name'=>'SettingsForm',
+            'caption' => $this->title.' '.$this->version,
+            'width' => '500px',
+            'fields' => array (
+                array('type'=>'hidden','name'=>'update', 'value'=>$this->name),
+                array('type'=>'text', 'value'=>'SpamPrevent изменяет все адреса e-mail на страницах ' .
+                'таким образом, чтобы скрыть их от роботов, собирающих базы адресов для спамеров.'),
+                array('type'=>'header', 'value'=>'Защита адресов в ссылках'),
+                array('type'=>'select', 'name' => 'href_method', 'label' => 'Метод',
+                    'items' => array('(не использовать защиту)',
+                        'JavaScript - подставлять адрес только при наведении мыши'),
+                    'values' => array('none', 'onmouseover')),
+                array('type'=>'edit', 'name' => 'href_fake_email', 'label' => 'Фиктивный адрес',
+                    'width' => '100%'),
+                array('type'=>'header', 'value'=>'Защита адресов в тексте'),
+                array('type'=>'select', 'name' => 'text_method', 'label' => 'Метод',
+                    'items' => array('(не использовать защиту)', 'Конвертировать символы адреса в спец.коды'),
+                    'values' => array('none', 'entity')),
+            ),
+            'buttons' => array('ok', 'apply', 'cancel'),
+        );
 
-		/** @var TAdminUI $page */
-		$page = Eresus_Kernel::app()->getPage();
-		$result = $page->renderForm($form, $this->settings);
-		return $result;
-	}
+        /** @var TAdminUI $page */
+        $page = Eresus_Kernel::app()->getPage();
+        $result = $page->renderForm($form, $this->settings);
+        return $result;
+    }
 
-	/**
-	 * Обработчик события clientBeforeSend
-	 *
-	 * @param string $text	Исходный текст страницы
-	 * @return string
-	 */
-	function clientBeforeSend($text)
-	{
-		$local_part = '[\d\wа-я][\d\wа-я\.\-]*';
-		$server_part = '[\d\wа-я][\d\wа-я\-\.]+\.(\w{2,}|рф)';
-		if ($this->settings['href_method'] != 'none')
-		{
-			preg_match_all('/<a\s+.*href="mailto:([^"]+)"(.*)>/ui', $text, $matches,
-				PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-			$delta = 0;
-			for ($i = 0; $i < count($matches); $i++)
-			{
-				$replace = $this->encodeHref($matches[$i][1][0]);
-				$text = substr_replace($text, $replace, $matches[$i][1][1] + $delta,
-					strlen($matches[$i][1][0]));
-				$delta += strlen($replace) - strlen($matches[$i][1][0]);
-			}
-		}
-		if ($this->settings['text_method'] != 'none')
-		{
-			preg_match_all('/(mailto:)?' . $local_part . '@' . $server_part . '/ui', $text, $matches,
-				PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-			$delta = 0;
-			for ($i = 0; $i < count($matches); $i++)
-			{
-				if (strpos($matches[$i][0][0], 'mailto:') === false)
-				{
-					$replace = $this->encodeText($matches[$i][0][0]);
-					$text = substr_replace($text, $replace, $matches[$i][0][1] + $delta,
-						strlen($matches[$i][0][0]));
-					$delta += strlen($replace) - strlen($matches[$i][0][0]);
-				}
-			}
-		}
-		return $text;
-	}
+    /**
+     * Обработчик события clientBeforeSend
+     *
+     * @param string $text	Исходный текст страницы
+     * @return string
+     */
+    function clientBeforeSend($text)
+    {
+        $local_part = '[\d\wа-я][\d\wа-я\.\-]*';
+        $server_part = '[\d\wа-я][\d\wа-я\-\.]+\.(\w{2,}|рф)';
+        if ($this->settings['href_method'] != 'none')
+        {
+            preg_match_all('/<a\s+.*href="mailto:([^"]+)"(.*)>/ui', $text, $matches,
+                PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+            $delta = 0;
+            for ($i = 0; $i < count($matches); $i++)
+            {
+                $replace = $this->encodeHref($matches[$i][1][0]);
+                $text = substr_replace($text, $replace, $matches[$i][1][1] + $delta,
+                    strlen($matches[$i][1][0]));
+                $delta += strlen($replace) - strlen($matches[$i][1][0]);
+            }
+        }
+        if ($this->settings['text_method'] != 'none')
+        {
+            preg_match_all('/(mailto:)?' . $local_part . '@' . $server_part . '/ui', $text, $matches,
+                PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+            $delta = 0;
+            for ($i = 0; $i < count($matches); $i++)
+            {
+                if (strpos($matches[$i][0][0], 'mailto:') === false)
+                {
+                    $replace = $this->encodeText($matches[$i][0][0]);
+                    $text = substr_replace($text, $replace, $matches[$i][0][1] + $delta,
+                        strlen($matches[$i][0][0]));
+                    $delta += strlen($replace) - strlen($matches[$i][0][0]);
+                }
+            }
+        }
+        return $text;
+    }
 
-	/**
-	 * Кодирует ссылку
-	 *
-	 * @param string $source
-	 *
-	 * @throws LogicException  если в настройках указан неподдерживаемый метод кодировки
-	 *
-	 * @return string
-	 *
-	 * @since 2.00
-	 */
-	private function encodeHref($source)
-	{
-		switch ($this->settings['href_method'])
-		{
-			case 'onmouseover':
-				$replace = $this->settings['href_fake_email'];
-				$mail = implode("'+'", preg_split('/(.{' . mt_rand(3, 6) . '})/us', 'mailto:' . $source,
-					0, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE));
-				$replace .= '" onmouseover="this.href=\''.$mail.'\'';
-				break;
+    /**
+     * Кодирует ссылку
+     *
+     * @param string $source
+     *
+     * @throws LogicException  если в настройках указан неподдерживаемый метод кодировки
+     *
+     * @return string
+     *
+     * @since 2.00
+     */
+    private function encodeHref($source)
+    {
+        switch ($this->settings['href_method'])
+        {
+            case 'onmouseover':
+                $replace = $this->settings['href_fake_email'];
+                $mail = implode("'+'", preg_split('/(.{' . mt_rand(3, 6) . '})/us', 'mailto:' . $source,
+                    0, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE));
+                $replace .= '" onmouseover="this.href=\''.$mail.'\'';
+                break;
+            default:
+                throw new LogicException(
+                    "Unknown href encoding method: \"{$this->settings['text_method']}\"");
+        }
+        return $replace;
+    }
 
-			default:
-				throw new LogicException(
-					"Unknown href encoding method: \"{$this->settings['text_method']}\"");
-		}
-		return $replace;
-	}
-
-	/**
-	 * Кодирует строку текста
-	 *
-	 * @param string $source
-	 *
-	 * @throws LogicException  если в настройках указан неподдерживаемый метод кодировки
-	 *
-	 * @return string
-	 *
-	 * @since 2.00
-	 */
-	private function encodeText($source)
-	{
-		switch ($this->settings['text_method'])
-		{
-			case 'entity':
-				$replace = mb_encode_numericentity($source, array (0x0, 0xffff, 0, 0xffff), 'UTF-8');
-				break;
-
-			default:
-				throw new LogicException(
-					"Unknown text encoding method: \"{$this->settings['text_method']}\"");
-		}
-		return $replace;
-	}
+    /**
+     * Кодирует строку текста
+     *
+     * @param string $source
+     *
+     * @throws LogicException  если в настройках указан неподдерживаемый метод кодировки
+     *
+     * @return string
+     *
+     * @since 2.00
+     */
+    private function encodeText($source)
+    {
+        switch ($this->settings['text_method'])
+        {
+            case 'entity':
+                $replace = mb_encode_numericentity($source, array (0x0, 0xffff, 0, 0xffff), 'UTF-8');
+                break;
+            default:
+                throw new LogicException(
+                    "Unknown text encoding method: \"{$this->settings['text_method']}\"");
+        }
+        return $replace;
+    }
 }
+
