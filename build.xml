@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- Сборочный файл для SpamPrevent
 
- $Id: build.xml 2173 2012-05-18 14:45:27Z mk $
- -->
-
-<project name="spamprevent" default="build" basedir="./">
+<project name="SpamPrevent" default="build" basedir="./">
 
 	<property file="build.properties" />
 
@@ -18,7 +13,6 @@
 	<!-- Все исходные файлы -->
 	<fileset dir="src" id="files.sources">
 		<include name="**" />
-		<exclude name=".svn" />
 	</fileset>
 
 		<!-- Исходные файлы PHP -->
@@ -26,11 +20,42 @@
 			<include name="**/*.php" />
 		</fileset>
 
-	<!--
-	=====================================================================
-	Модульные тесты
-	=====================================================================
-	-->
+    <!--
+    =====================================================================
+    Загружает файлы сторонних компонентов
+    =====================================================================
+    -->
+    <target name="vendors" description="Fetch 3rd party components">
+
+        <if>
+            <available file="vendor" property="." />
+
+            <then>
+                <composer command="update" />
+            </then>
+
+            <else>
+                <if>
+                    <not>
+                        <available file="${project.basedir}/composer.phar" property="." />
+                    </not>
+                    <then>
+                        <httpget url="http://getcomposer.org/composer.phar"
+                            dir="${project.basedir}" />
+                        <chmod file="${project.basedir}/composer.phar" mode="0777" />
+                    </then>
+                </if>
+                <composer command="install" />
+            </else>
+        </if>
+
+    </target>
+
+    <!--
+    =====================================================================
+    Модульные тесты
+    =====================================================================
+    -->
 	<target name="tests" description="Run unit tests">
 
 		<phplint>
@@ -88,16 +113,13 @@
 			</else>
 		</if>
 
-		<phpcodesniffer
-			standard="Eresus"
-			haltonerror="false"
-		>
-			<formatter
-				type="${phpcs.format}"
-				outfile="${logs.dir}/phpcs.${phpcs.file.extension}"
-			/>
-			<fileset refid="files.sources.php" />
-		</phpcodesniffer>
+        <phpcodesniffer standard="PSR2DS" haltonerror="false" encoding="UTF-8">
+            <formatter
+                type="${phpcs.format}"
+                outfile="${logs.dir}/phpcs.${phpcs.file.extension}"
+                />
+            <fileset refid="files.sources.php" />
+        </phpcodesniffer>
 
 	</target>
 
@@ -114,6 +136,9 @@
 		<delete dir="${docs.dir}" includeemptydirs="true" />
 		<delete dir="${logs.dir}" includeemptydirs="true" />
 		<delete dir="${phpunit.coverage.html}" includeemptydirs="true" />
+        <delete file="composer.lock" />
+        <delete file="composer.phar" />
+        <delete dir="vendor" includeemptydirs="true" />
 
 	</target>
 
@@ -143,20 +168,18 @@
 	-->
 	<target name="docs" description="Generate documentation">
 
-		<delete dir="${docs.dir}" includeemptydirs="true" failonerror="true" />
+        <if>
+            <available file="${docs.dir}" property="." />
+            <then>
+                <delete dir="${docs.dir}" includeemptydirs="true" failonerror="true" />
+            </then>
+        </if>
+        <mkdir dir="${docs.dir}" />
 
-		<phpdoc title="SpamPrevent ${product.version} API"
-			destdir="${docs.dir}"
-			sourcecode="false"
-			parseprivate="false"
-			output="${docs.converter}">
-			<fileset refid="files.sources" />
-			<projdocfileset dir=".">
-				<include name="README" />
-				<include name="INSTALL" />
-				<include name="CHANGELOG" />
-			</projdocfileset>
-		</phpdoc>
+
+        <phpdoc2 title="${phing.project.name} ${product.version} API" destdir="${docs.dir}">
+            <fileset refid="files.sources.php" />
+        </phpdoc2>
 
 	</target>
 
@@ -167,24 +190,23 @@
 	-->
 	<target name="distr" depends="build" description="Build distributive">
 
-		<available file="${distr.dir}" type="dir" property="distr.dir.exists" />
+        <if>
+            <not>
+                <available file="${distr.dir}" property="." />
+            </not>
+            <then>
+                <mkdir dir="${distr.dir}" />
+            </then>
+        </if>
 
-		<if>
-			<not>
-				<isset property="${distr.dir.exists}" />
-			</not>
-
-			<then>
-				<mkdir dir="${distr.dir}" />
-			</then>
-
-		</if>
-
-		<tar destFile="${distr.dir}/${phing.project.name}-${product.version}.tar.bz2" compression="bzip2">
-			<fileset dir="${build.dir}">
-				<include name="**" />
-			</fileset>
-		</tar>
+        <tar
+            destfile="${distr.dir}/${phing.project.name}-${product.version}.tar.bz2"
+            compression="bzip2"
+            >
+            <fileset dir="${build.dir}">
+                <include name="**" />
+            </fileset>
+        </tar>
 
 	</target>
 

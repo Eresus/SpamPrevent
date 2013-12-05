@@ -1,0 +1,15 @@
+{
+    "name": "eresus/spamprevent",
+    "description": "Модуль «Защита адресов e-mail от спам-роботов» для Eresus CMS",
+    "authors":
+    [
+        {
+            "name": "Михаил Красильников",
+            "email": "m.krasilnikov@yandex.ru"
+        }
+    ],
+    "require":
+    {
+        "mekras/test-doubles": "dev-master"
+    }
+}
