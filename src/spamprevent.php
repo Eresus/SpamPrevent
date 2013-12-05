@@ -97,7 +97,7 @@ class SpamPrevent extends Plugin
      *
      * @return string	Диалог настроек
      */
-    function settings()
+    public function settings()
     {
         $form = array(
             'name'=>'SettingsForm',
@@ -134,7 +134,7 @@ class SpamPrevent extends Plugin
      * @param string $text	Исходный текст страницы
      * @return string
      */
-    function clientBeforeSend($text)
+    public function clientBeforeSend($text)
     {
         $local_part = '[\d\wа-я][\d\wа-я\.\-]*';
         $server_part = '[\d\wа-я][\d\wа-я\-\.]+\.(\w{2,}|рф)';
